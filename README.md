@@ -9,17 +9,17 @@ query language used for that type of database (e.g. SQL for relational, Cypher f
 
 Full task text in russian is [here](spo-lab-1.5.pdf).
 
-- relational_json
-  - relational database
+- [relational_json](relational_json)
+  - [relational database](https://en.wikipedia.org/wiki/Relational_database)
   - JSON between client and server
   - SQL-like language as a query language
 
-- relational_protobuf
-  - relational database
+- [relational_protobuf](relational_protobuf)
+  - [relational database](https://en.wikipedia.org/wiki/Relational_database)
   - protocol buffers between client and server
   - SQL-like language as a query language
 
-- graph_protobuf
-  - graph database
+- [graph_protobuf](graph_protobuf)
+  - [graph database](https://en.wikipedia.org/wiki/Graph_database)
   - protocol buffers between client and server
   - Cypher-like language as a query language
