@@ -1,0 +1,146 @@
+
+syntax = "proto2";
+
+message attribute {
+  required string name = 1;
+  required string value = 2;
+}
+
+message entity {
+  oneof entity {
+    vertex_entity vertex = 1;
+    edge_entity edge = 2;
+  }
+}
+
+message vertex_entity {
+  optional string name = 1;
+  repeated string labels = 2;
+  repeated attribute attrs = 3;
+}
+
+message edge_entity {
+  optional string name = 1;
+  required vertex_entity source = 2;
+  required vertex_entity destination = 3;
+  optional string label = 4;
+}
+
+message request {
+  repeated entity match = 1;
+  optional where where = 2;
+
+  oneof op {
+    request_create_op create = 3;
+    request_set_op set = 4;
+    request_remove_op remove = 5;
+    request_delete_op delete = 6;
+    request_return_op return = 7;
+  }
+}
+
+message where {
+  oneof op {
+    where_equals equals = 1;
+    where_label label = 2;
+    where not = 3;
+    where_binary and = 4;
+    where_binary or = 5;
+  }
+}
+
+message where_equals {
+  required string name = 1;
+  required string attr = 2;
+  required string value = 3;
+}
+
+message where_label {
+  required string name = 1;
+  required string label = 2;
+}
+
+message where_binary {
+  required where left = 1;
+  required where right = 2;
+}
+
+message request_create_op {
+  repeated entity entities = 1;
+}
+
+message request_set_op {
+  repeated request_set_op_change changes = 1;
+}
+
+message request_set_op_change {
+  required string name = 1;
+
+  oneof payload {
+    request_set_op_change_attr attr = 2;
+    string label = 3;
+  }
+}
+
+message request_set_op_change_attr {
+  required string attr = 1;
+  required string value = 2;
+}
+
+message request_remove_op {
+  repeated request_remove_op_change changes = 1;
+}
+
+message request_remove_op_change {
+  required string name = 1;
+
+  oneof payload {
+    string attr = 2;
+    string label = 3;
+  }
+}
+
+message request_delete_op {
+  repeated string names = 1;
+}
+
+message request_return_op {
+  repeated request_return_op_value values = 1;
+  optional uint64 limit = 2;
+  optional uint64 skip = 3;
+}
+
+message request_return_op_value {
+  required string name = 1;
+  optional string attr = 2;
+}
+
+message response {
+  oneof payload {
+    response_success success = 1;
+    string error = 2;
+  }
+}
+
+message response_success {
+  oneof value {
+    uint64 amount = 1;
+    response_success_table table = 2;
+  }
+}
+
+message response_success_table {
+  repeated string columns = 1;
+  repeated response_success_row rows = 2;
+}
+
+message response_success_row {
+  repeated response_success_cell cells = 1;
+}
+
+message response_success_cell {
+  oneof value {
+    string string = 1;
+    vertex_entity vertex = 2;
+  }
+}

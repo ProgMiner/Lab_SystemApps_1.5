@@ -1,0 +1,120 @@
+
+enum value_type {
+  INT = 0;
+  UINT = 1;
+  NUM = 2;
+  STR = 3;
+}
+
+message value {
+  oneof value {
+    int64 int = 1;
+    uint64 uint = 2;
+    double num = 3;
+    string str = 4;
+  }
+}
+
+message table {
+  repeated string columns = 1;
+  repeated row rows = 2;
+
+  message row {
+    repeated value cells = 1;
+  }
+}
+
+message request {
+  oneof action {
+    create_table_request create_table = 1;
+    drop_table_request drop_table = 2;
+    insert_request insert = 3;
+    delete_request delete = 4;
+    select_request select = 5;
+    update_request update = 6;
+  }
+}
+
+message create_table_request {
+  required string table = 1;
+  repeated column columns = 2;
+
+  message column {
+    required string name = 1;
+    required value_type type = 2;
+  }
+}
+
+message drop_table_request {
+  required string table = 1;
+}
+
+message insert_request {
+  required string table = 1;
+  repeated string columns = 2;
+  repeated value values = 3;
+}
+
+message delete_request {
+  required string table = 1;
+  optional where_expr where = 2;
+}
+
+message select_request {
+  required string table = 1;
+  repeated string columns = 2;
+  optional where_expr where = 3;
+  optional uint64 offset = 4;
+  optional uint64 limit = 5;
+  repeated join joins = 6;
+
+  message join {
+    required string table = 1;
+    required string t_column = 2;
+    required string s_column = 3;
+  }
+}
+
+message update_request {
+  required string table = 1;
+  repeated string columns = 2;
+  repeated value values = 3;
+  optional where_expr where = 4;
+}
+
+message where_expr {
+  oneof op {
+    where_value_op eq = 1;
+    where_value_op ne = 2;
+    where_value_op lt = 3;
+    where_value_op gt = 4;
+    where_value_op le = 5;
+    where_value_op ge = 6;
+    where_expr_op and = 7;
+    where_expr_op or = 8;
+  }
+}
+
+message where_value_op {
+  required string column = 1;
+  required value value = 2;
+}
+
+message where_expr_op {
+  required where_expr left = 1;
+  required where_expr right = 2;
+}
+
+message response {
+  oneof payload {
+    success_response success = 1;
+    string error = 2;
+  }
+}
+
+message success_response {
+  oneof value {
+    uint64 amount = 1;
+    table table = 2;
+  }
+}
